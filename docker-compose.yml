@@ -1,4 +1,5 @@
 
+
 services:
   mysql:
     image: mysql:8.0
@@ -36,3 +37,105 @@ volumes:
 networks:
   library-network:
     driver: bridge
+
+
+
+
+
+
+
+
+
+
+
+
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: eticket-deployment
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: eticket
+
+  template:
+    metadata:
+      labels:
+        app: eticket
+
+    spec:
+      containers:
+        - name: eticket-container
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+
+
+
+
+
+
+
+
+
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: eticket-service
+
+spec:
+  type: NodePort
+
+  selector:
+    app: eticket
+
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+      protocol: TCP
+
+
+
+
+
+
+
+define host {
+    use                     linux-server
+    host_name               eticket-server
+    alias                   E-Ticketing Server
+    address                 127.0.0.1
+}
+define service {
+    use                     generic-service
+    host_name               eticket-server
+    service_description     HTTP Service
+    check_command           check_http
+}
+define service {
+    use                     generic-service
+    host_name               eticket-server
+    service_description     MySQL Port
+    check_command           check_tcp!3306
+}
+/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+
+
+
+
+
+
+docker exec -it nagios bash
+find / -name nagios.cfg
+ls /usr/local/nagios/etc
+ls /usr/local/nagios/etc/objects
+nano /usr/local/nagios/etc/objects/localhost.cfg
