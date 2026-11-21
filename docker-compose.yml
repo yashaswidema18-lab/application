@@ -40,10 +40,26 @@ networks:
 
 
 
+docker run -d `
+ --name eticket-db `
+ --network eticket-net `
+ -e MYSQL_ROOT_PASSWORD=Root12345 `
+ -e MYSQL_DATABASE=eticket `
+ -e MYSQL_USER=eticketuser `
+ -e MYSQL_PASSWORD=Ticket12345 `
+ -v eticket-db-data:/var/lib/mysql `
+ mysql:8.0
 
 
-
-
+docker run -d `
+ --name eticket-web `
+ --network eticket-net `
+ -p 80:80 `
+ -e WORDPRESS_DB_HOST=eticket-db:3306 `
+ -e WORDPRESS_DB_USER=eticketuser `
+ -e WORDPRESS_DB_PASSWORD=Ticket12345 `
+ -e WORDPRESS_DB_NAME=eticket `
+ wordpress:latest
 
 
 
