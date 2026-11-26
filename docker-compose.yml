@@ -215,6 +215,25 @@ apt install nano -y
 
 
 
+#aws
+sudo apt update
+sudo apt install -y git maven docker.io
+sudo systemctl start docker
+
+git clone https://github.com/YOUR_USER_NAME/YOUR_REPO_NAME.git
+cd Your_repo_name
+
+mvn clean package
+sudo docker build -t library-app .
+sudo docker run -d --name app-demo -p 6060:8080 library-app
+
+
+
+
+
+
+
+
 #jenkins java script
 mvn clean compile
 mvn clean package
