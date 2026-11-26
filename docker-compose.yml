@@ -211,3 +211,71 @@ ls /usr/local/nagios/etc/objects
 nano /usr/local/nagios/etc/objects/localhost.cfg
 apt update
 apt install nano -y
+
+
+
+
+#jenkins java script
+mvn clean compile
+mvn clean package
+
+#script:
+Jenkinsfile
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code'
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building Java Application'
+                bat 'mvn clean compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing Java Application'
+                bat 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo 'Packaging Java Application'
+                bat 'mvn clean package'
+            }
+        }
+
+        stage('Execute') {
+            steps {
+                echo 'Running Java Application'
+                bat 'java -cp target/classes com.demo.App'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'BUILD SUCCESSFUL!'
+        }
+
+        failure {
+            echo 'BUILD FAILED!'
+        }
+    }
+
+git init
+git add .
+git commit -m "Initial Java application"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/JenkinsJavaProject.git
+git push -u origin main
