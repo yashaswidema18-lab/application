@@ -292,6 +292,76 @@ pipeline {
         }
     }
 
+
+#jenkins web script
+pipeline {
+
+    agent any
+
+    tools {
+        jdk 'JDK21'
+        maven 'Maven3'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Downloading source code'
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building Web Application'
+                bat 'mvn clean compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing Application'
+                bat 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo 'Creating WAR file'
+                bat 'mvn package'
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.war'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying to Tomcat'
+
+                bat '''
+                copy /Y target\\JenkinsWebApp.war "C:\\apache-tomcat-10.1\\webapps\\JenkinsWebApp.war"
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Web Application Deployed Successfully!'
+        }
+
+        failure {
+            echo 'Build or Deployment Failed!'
+        }
+    }
+}
+
+
 git init
 git add .
 git commit -m "Initial Java application"
